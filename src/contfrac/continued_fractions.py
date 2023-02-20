@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import math, numbers, itertools
 
-from typing import Union, Callable, Generator, List
+from typing import Optional, Union, Callable, Generator, List
 
 
 def _coefficients_from_value(x : float) -> Generator:
@@ -100,13 +100,6 @@ class ContFrac():
         return f"{self.__class__.__name__}({self.__float__()})"
 
 
-    def __float__(self) -> float:
-        """Compute the best approximation up to machine precision
-
-        """
-        return self.convergents_list()[-1][2]
-
-
     def coefficients(self) -> Generator:
         """The coefficients stream of the continued fraction
 
@@ -127,7 +120,7 @@ class ContFrac():
         return self._coefficients()
 
 
-    def coefficients_list(self, N : int = 100) -> List:
+    def coefficients_list(self, N : int = 40) -> List:
         """The coefficients as a list
 
         """
@@ -165,3 +158,63 @@ class ContFrac():
 
         """
         return ContFrac(lambda: _mobius_transform(a, b, c, d, self._coefficients()))
+
+
+    # UNARY ARITHMETIC
+
+    def __int__(self) -> int:
+        return int(self.__float__())
+
+
+    def __float__(self) -> float:
+        """Compute the best approximation up to machine precision
+
+        """
+        # TODO: improve!
+        return self.convergents_list()[-1][2]
+
+
+    def __trunc__(self) -> float:
+        return math.trunc(self.__float__())
+
+
+    def __ceil__(self) -> int:
+        return math.ceil(self.__float__())
+
+
+    def __floor__(self) -> int:
+        return math.floor(self.__float__())
+
+
+    def __round__(self, ndigits : Optional[int] = None) -> float:
+        return round(self.__float__(), ndigits) if ndigits else self.__float__()
+
+
+    def __pos__(self) -> ContFrac:
+        return self
+
+
+    def __neg__(self) -> ContFrac:
+        return self.mobius(0, -1, 1, 0)
+
+
+    # BINARY ARITHMETIC
+
+    def __add__(self, other : numbers.Rational) -> ContFrac:
+        n, d = other.numerator, other.denominator
+        return self.mobius(n, d, d, 0)
+
+
+    def __sub__(self, other : numbers.Rational) -> ContFrac:
+        n, d = other.numerator, other.denominator
+        return self.mobius(-n, d, d, 0)
+
+
+    def __mul__(self, other : numbers.Rational) -> ContFrac:
+        n, d = other.numerator, other.denominator
+        return self.mobius(0, n, d, 0)
+
+
+    def __truediv__(self, other : numbers.Rational) -> ContFrac:
+        n, d = other.numerator, other.denominator
+        return self.mobius(0, d, n, 0)
