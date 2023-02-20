@@ -3,12 +3,12 @@ Continued fractions
 """
 from __future__ import annotations
 
-import math, numbers, itertools
+import math, numbers, itertools, fractions
 
 from typing import Optional, Union, Callable, Generator, List
 
 
-def _coefficients_from_value(x : float) -> Generator:
+def _coefficients_from_real(x : numbers.Real) -> Generator:
     while True:
         a = math.floor(x)
 
@@ -18,6 +18,20 @@ def _coefficients_from_value(x : float) -> Generator:
             break
 
         x = 1 / (x-a)
+
+
+def _coefficients_from_rational(x : numbers.Rational) -> Generator:
+    while True:
+        a, b = x.numerator, x.denominator
+
+        q = math.floor(x)
+
+        yield q
+
+        if a-b*q == 0:
+            break
+
+        x = fractions.Fraction(b, a-b*q)
 
 
 def _convergents(x : Generator) -> Generator:
@@ -66,7 +80,7 @@ class ContFrac():
 
     """
 
-    def __init__(self, x : Union[numbers.Number, Callable[[], Generator]]):
+    def __init__(self, x : Union[numbers.Real, numbers.Rational, Callable[[], Generator]]):
         """Initialize a CF
 
         Parameters
@@ -80,7 +94,9 @@ class ContFrac():
         if isinstance(x, Callable):
             self._coefficients = x
         elif isinstance(x, numbers.Real):
-            self._coefficients = lambda: _coefficients_from_value(float(x))
+            self._coefficients = lambda: _coefficients_from_real(x)
+        elif isinstance(x, numbers.Rational):
+            self._coefficients = lambda: _coefficients_from_rational(x)
         else:
             raise TypeError
 
