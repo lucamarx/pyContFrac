@@ -24,3 +24,6 @@ requires-python = ">=3.9"
 
 [project.optional-dependencies]
 dev = ["pip-tools", "pytest"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
