@@ -14,7 +14,7 @@ def _coefficients_from_real(x : numbers.Real) -> Generator:
 
         yield a
 
-        if abs(x-a) < 1e-12:
+        if abs(x-a) < 1e-10:
             break
 
         x = 1 / (x-a)
@@ -186,8 +186,17 @@ class ContFrac():
         """Compute the best approximation up to machine precision
 
         """
-        # TODO: improve!
-        return float(self.convergents_list()[-1])
+        best_conv = None
+        for conv in self.convergents():
+            if best_conv is not None and abs(conv - best_conv) < 1e-14:
+                break
+
+            best_conv = conv
+
+        if best_conv is None:
+            raise Exception("no convergents")
+
+        return float(best_conv)
 
 
     def __trunc__(self) -> float:
