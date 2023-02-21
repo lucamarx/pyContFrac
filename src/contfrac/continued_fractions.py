@@ -8,7 +8,7 @@ import math, numbers, itertools, fractions
 from typing import Optional, Union, Callable, Generator, List, Tuple
 
 
-def _coefficients_from_real(x : numbers.Real) -> Generator:
+def _coefficients_from_real(x : numbers.Real) -> Generator[int, None, None]:
     while True:
         a = math.floor(x)
 
@@ -20,7 +20,7 @@ def _coefficients_from_real(x : numbers.Real) -> Generator:
         x = 1 / (x-a)
 
 
-def _coefficients_from_rational(x : numbers.Rational) -> Generator:
+def _coefficients_from_rational(x : numbers.Rational) -> Generator[int, None, None]:
     while True:
         a, b = x.numerator, x.denominator
 
@@ -34,7 +34,7 @@ def _coefficients_from_rational(x : numbers.Rational) -> Generator:
         x = fractions.Fraction(b, a-b*q)
 
 
-def _convergents(x : Generator) -> Generator:
+def _convergents(x : Generator) -> Generator[fractions.Fraction, None, None]:
     p_km1, q_km1 = 1, 0
     p_km2, q_km2 = 0, 1
 
@@ -52,7 +52,7 @@ def _convergents(x : Generator) -> Generator:
         p_km1, q_km1 = p_k, q_k
 
 
-def _mobius_transform(a : int, b : int, c : int, d : int, x : Generator) -> Generator:
+def _mobius_transform(a : int, b : int, c : int, d : int, x : Generator[int, None, None]) -> Generator[int, None, None]:
     while True:
         if c == 0 and d == 0:
             break
@@ -84,7 +84,7 @@ class ContFrac():
 
     """
 
-    def __init__(self, x : Union[numbers.Real, numbers.Rational, Callable[[], Generator]]):
+    def __init__(self, x : Union[numbers.Real, numbers.Rational, Callable[[], Generator[int, None, None]]]):
         """Initialize a CF
 
         Parameters
@@ -120,7 +120,7 @@ class ContFrac():
         return f"{self.__class__.__name__}({self.as_rational()})"
 
 
-    def coefficients(self) -> Generator:
+    def coefficients(self) -> Generator[int, None, None]:
         """The coefficients stream of the continued fraction
 
         `            1
@@ -140,14 +140,14 @@ class ContFrac():
         return self._coefficients()
 
 
-    def coefficients_list(self, N : int = 40) -> List:
+    def coefficients_list(self, N : int = 40) -> List[int]:
         """The coefficients as a list
 
         """
         return list(itertools.islice(self.coefficients(), N))
 
 
-    def convergents(self) -> Generator:
+    def convergents(self) -> Generator[fractions.Fraction, None, None]:
         """The convergents stream
 
         Returns
@@ -162,7 +162,7 @@ class ContFrac():
         return _convergents(self._coefficients())
 
 
-    def convergents_list(self, N : int = 40) -> List:
+    def convergents_list(self, N : int = 40) -> List[fractions.Fraction]:
         """The convergents as a list
 
         """
