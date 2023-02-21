@@ -54,7 +54,10 @@ def _convergents(x : Generator) -> Generator:
 
 def _mobius_transform(a : int, b : int, c : int, d : int, x : Generator) -> Generator:
     while True:
-        if c != 0 and d != 0 and math.floor(a/c) == math.floor(b/d):
+        if c == 0 and d == 0:
+            break
+
+        elif c != 0 and d != 0 and math.floor(a/c) == math.floor(b/d):
             # emit and EGEST
 
             q = math.floor(a/c)
@@ -68,11 +71,13 @@ def _mobius_transform(a : int, b : int, c : int, d : int, x : Generator) -> Gene
             try:
                 p = next(x)
             except StopIteration:
-                break
+                # p = ∞
+                p = None
 
-            a, b, c, d = b, a+b*p, d, c+d*p
-
-    yield b
+            if p is not None:
+                a, b, c, d = b, a+b*p, d, c+d*p
+            else:
+                a, b, c, d = b, b, d, d
 
 
 class ContFrac():
