@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import math, numbers, itertools, fractions
 
-from typing import Optional, Union, Callable, Generator, List
+from typing import Optional, Union, Callable, Generator, List, Tuple
 
 
 def _coefficients_from_real(x : numbers.Real) -> Generator:
@@ -107,7 +107,7 @@ class ContFrac():
 
 
     def __str__(self) -> str:
-        v = self.convergents_list()[-1]
+        v = self.as_rational()
         l = max(len(str(v.numerator)), len(str(v.denominator)))
 
         return f"""
@@ -118,7 +118,7 @@ class ContFrac():
 
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.__float__()})"
+        return f"{self.__class__.__name__}({self.as_rational()})"
 
 
     def coefficients(self) -> Generator:
@@ -181,14 +181,9 @@ class ContFrac():
         return ContFrac(lambda: _mobius_transform(a, b, c, d, self._coefficients()))
 
 
-    # UNARY ARITHMETIC
-
-    def __int__(self) -> int:
-        return int(self.__float__())
-
-
-    def __float__(self) -> float:
-        """Compute the best approximation up to machine precision
+    def as_rational(self) -> fractions.Fraction:
+        """Compute the best rational approximation up to machine precision, it
+        is exact if the number was rational in the first place
 
         """
         best_conv = None
@@ -199,25 +194,40 @@ class ContFrac():
             best_conv = conv
 
         if best_conv is None:
-            raise Exception("no convergents")
+            # ∞
+            raise OverflowError
 
-        return float(best_conv)
+        return best_conv
+
+
+    # UNARY ARITHMETIC
+
+    def __int__(self) -> int:
+        return int(self.as_rational())
+
+
+    def __float__(self) -> float:
+        return float(self.as_rational())
+
+
+    def as_integer_ratio(self) -> Tuple[int, int]:
+        return self.as_rational().as_integer_ratio()
 
 
     def __trunc__(self) -> float:
-        return math.trunc(self.__float__())
+        return math.trunc(self.as_rational())
 
 
     def __ceil__(self) -> int:
-        return math.ceil(self.__float__())
+        return math.ceil(self.as_rational())
 
 
     def __floor__(self) -> int:
-        return math.floor(self.__float__())
+        return math.floor(self.as_rational())
 
 
     def __round__(self, ndigits : Optional[int] = None) -> float:
-        return round(self.__float__(), ndigits) if ndigits else self.__float__()
+        return round(float(self), ndigits) if ndigits else float(self)
 
 
     def __pos__(self) -> ContFrac:
