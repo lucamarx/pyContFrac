@@ -46,7 +46,7 @@ def _convergents(x : Generator) -> Generator:
 
         p_k, q_k = a_k*p_km1 + p_km2, a_k*q_km1 + q_km2
 
-        yield (p_k, q_k, p_k/q_k)
+        yield fractions.Fraction(p_k, q_k)
 
         p_km2, q_km2 = p_km1, q_km1
         p_km1, q_km1 = p_k, q_k
@@ -86,7 +86,7 @@ class ContFrac():
         Parameters
         ----------
 
-        x : Real, Callable
+        x : Real, Rational, Callable
         A specific value or a function that returns a stream
         of coefficients
 
@@ -102,13 +102,13 @@ class ContFrac():
 
 
     def __str__(self) -> str:
-        p, q, v = self.convergents_list()[-1]
-        l = max(len(str(p)), len(str(q)))
+        v = self.convergents_list()[-1]
+        l = max(len(str(v.numerator)), len(str(v.denominator)))
 
         return f"""
-  {p}
-  {"-"*l} = {v}
-  {q}
+  {v.numerator}
+  {"-" * l} = {v}
+  {v.denominator}
         """
 
 
@@ -149,7 +149,7 @@ class ContFrac():
         Returns
         -------
 
-        `[(p0, q0, p0/q0), (p1, q1, p1/q1), ...]`
+        `[p0/q0, p1/q1, ...]`
 
         where `pn / qn` are the rational approximations to the continued
         fraction
@@ -187,7 +187,7 @@ class ContFrac():
 
         """
         # TODO: improve!
-        return self.convergents_list()[-1][2]
+        return float(self.convergents_list()[-1])
 
 
     def __trunc__(self) -> float:
