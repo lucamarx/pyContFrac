@@ -8,30 +8,20 @@ import math, numbers, itertools, fractions
 from typing import Optional, Union, Callable, Generator, List, Tuple
 
 
-def _coefficients_from_real(x : numbers.Real) -> Generator[int, None, None]:
+def _euclid(x : numbers.Rational) -> Generator[int, None, None]:
+    """Euclid's algorithm
+
+    """
+    n, d = x.numerator, x.denominator
     while True:
-        a = math.floor(x)
-
-        yield a
-
-        if abs(x-a) < 1e-10:
-            break
-
-        x = 1 / (x-a)
-
-
-def _coefficients_from_rational(x : numbers.Rational) -> Generator[int, None, None]:
-    while True:
-        a, b = x.numerator, x.denominator
-
-        q = math.floor(x)
+        q, r = n//d, n%d
 
         yield q
 
-        if a-b*q == 0:
+        if r == 0:
             break
 
-        x = fractions.Fraction(b, a-b*q)
+        n, d = d, r
 
 
 def _convergents(x : Generator) -> Generator[fractions.Fraction, None, None]:
@@ -98,9 +88,9 @@ class ContFrac():
         if isinstance(x, Callable):
             self._coefficients = x
         elif isinstance(x, numbers.Real):
-            self._coefficients = lambda: _coefficients_from_real(x)
+            self._coefficients = lambda: _euclid(fractions.Fraction(*x.as_integer_ratio()))
         elif isinstance(x, numbers.Rational):
-            self._coefficients = lambda: _coefficients_from_rational(x)
+            self._coefficients = lambda: _euclid(x)
         else:
             raise TypeError
 
