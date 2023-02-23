@@ -3,16 +3,17 @@ Continued fractions
 """
 from __future__ import annotations
 
-import math, numbers, itertools, fractions
+import math, itertools, fractions
 
 from typing import Optional, Union, Callable, Generator, List, Tuple
 
 
-def _euclid(x : numbers.Rational) -> Generator[int, None, None]:
+def _euclid(x : fractions.Fraction) -> Generator[int, None, None]:
     """Euclid's algorithm
 
     """
     n, d = x.numerator, x.denominator
+
     while True:
         q, r = n//d, n%d
 
@@ -74,7 +75,7 @@ class ContFrac():
 
     """
 
-    def __init__(self, x : Union[numbers.Real, numbers.Rational, Callable[[], Generator[int, None, None]]]):
+    def __init__(self, x : Union[float, fractions.Fraction, Callable[[], Generator[int, None, None]]]):
         """Initialize a CF
 
         Parameters
@@ -87,9 +88,9 @@ class ContFrac():
         """
         if isinstance(x, Callable):
             self._coefficients = x
-        elif isinstance(x, numbers.Real):
-            self._coefficients = lambda: _euclid(fractions.Fraction(*x.as_integer_ratio()))
-        elif isinstance(x, numbers.Rational):
+        elif isinstance(x, float):
+            self._coefficients = lambda: _euclid(fractions.Fraction(x))
+        elif isinstance(x, fractions.Fraction):
             self._coefficients = lambda: _euclid(x)
         else:
             raise TypeError
@@ -229,21 +230,21 @@ class ContFrac():
 
     # BINARY ARITHMETIC
 
-    def __add__(self, other : numbers.Rational) -> ContFrac:
+    def __add__(self, other : fractions.Fraction) -> ContFrac:
         n, d = other.numerator, other.denominator
         return self.homographic(n, d, d, 0)
 
 
-    def __sub__(self, other : numbers.Rational) -> ContFrac:
+    def __sub__(self, other : fractions.Fraction) -> ContFrac:
         n, d = other.numerator, other.denominator
         return self.homographic(-n, d, d, 0)
 
 
-    def __mul__(self, other : numbers.Rational) -> ContFrac:
+    def __mul__(self, other : fractions.Fraction) -> ContFrac:
         n, d = other.numerator, other.denominator
         return self.homographic(0, n, d, 0)
 
 
-    def __truediv__(self, other : numbers.Rational) -> ContFrac:
+    def __truediv__(self, other : fractions.Fraction) -> ContFrac:
         n, d = other.numerator, other.denominator
         return self.homographic(0, d, n, 0)
