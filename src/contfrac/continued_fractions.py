@@ -42,7 +42,7 @@ def _convergents(x : Generator) -> Generator[fractions.Fraction, None, None]:
         p_km1, q_km1 = p_k, q_k
 
 
-def _mobius_transform(a : int, b : int, c : int, d : int, x : Generator[int, None, None]) -> Generator[int, None, None]:
+def _homographic_transform(a : int, b : int, c : int, d : int, x : Generator[int, None, None]) -> Generator[int, None, None]:
     while True:
         if c == 0 and d == 0:
             break
@@ -130,7 +130,7 @@ class ContFrac():
         return self._coefficients()
 
 
-    def coefficients_list(self, N : int = 40) -> List[int]:
+    def coefficients_as_list(self, N : int = 40) -> List[int]:
         """The coefficients as a list
 
         """
@@ -152,22 +152,22 @@ class ContFrac():
         return _convergents(self._coefficients())
 
 
-    def convergents_list(self, N : int = 40) -> List[fractions.Fraction]:
+    def convergents_as_list(self, N : int = 40) -> List[fractions.Fraction]:
         """The convergents as a list
 
         """
         return list(itertools.islice(self.convergents(), N))
 
 
-    def mobius(self, a : int, b : int, c : int, d : int) -> ContFrac:
-        """Apply a Möbius transform
+    def homographic(self, a : int, b : int, c : int, d : int) -> ContFrac:
+        """Apply the homographic transform
 
-        `       a + b·x
-        ` x' = ---------
-        `       c + d·x
+        `      a + b·x
+        ` z = ---------
+        `      c + d·x
 
         """
-        return ContFrac(lambda: _mobius_transform(a, b, c, d, self._coefficients()))
+        return ContFrac(lambda: _homographic_transform(a, b, c, d, self._coefficients()))
 
 
     def as_rational(self) -> fractions.Fraction:
@@ -224,26 +224,26 @@ class ContFrac():
 
 
     def __neg__(self) -> ContFrac:
-        return self.mobius(0, -1, 1, 0)
+        return self.homographic(0, -1, 1, 0)
 
 
     # BINARY ARITHMETIC
 
     def __add__(self, other : numbers.Rational) -> ContFrac:
         n, d = other.numerator, other.denominator
-        return self.mobius(n, d, d, 0)
+        return self.homographic(n, d, d, 0)
 
 
     def __sub__(self, other : numbers.Rational) -> ContFrac:
         n, d = other.numerator, other.denominator
-        return self.mobius(-n, d, d, 0)
+        return self.homographic(-n, d, d, 0)
 
 
     def __mul__(self, other : numbers.Rational) -> ContFrac:
         n, d = other.numerator, other.denominator
-        return self.mobius(0, n, d, 0)
+        return self.homographic(0, n, d, 0)
 
 
     def __truediv__(self, other : numbers.Rational) -> ContFrac:
         n, d = other.numerator, other.denominator
-        return self.mobius(0, d, n, 0)
+        return self.homographic(0, d, n, 0)

@@ -25,14 +25,14 @@ def test_creation_from_real():
         assert pytest.approx(float(ContFrac(x)), 1e-15) == x
 
 
-def test_mobius():
-    "test Möbius transform"
+def test_homographic():
+    "test homographic transform"
     for _ in range(N_ITERS):
         a, b, c, d = random.randint(1, 1000), random.randint(1, 1000), random.randint(1, 1000), random.randint(1, 1000)
 
         r = Fraction(random.randint(1, 1000), random.randint(1, 1000))
 
-        s = ContFrac(r).mobius(a, b, c, d).as_rational()
+        s = ContFrac(r).homographic(a, b, c, d).as_rational()
 
         assert ((a + b*r) / (c + d*r)) == s
 
