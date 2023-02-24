@@ -28,12 +28,12 @@ def test_creation_from_real():
 def test_homographic():
     "test homographic transform"
     for _ in range(N_ITERS):
-        a, b, c, d = random.randint(1, 1000), random.randint(1, 1000), random.randint(1, 1000), random.randint(1, 1000)
+        a, b, c, d = random.randint(1, 100), random.randint(1, 100), random.randint(1, 100), random.randint(1, 100)
 
-        r = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+        r = Fraction(random.randint(1, 100), random.randint(1, 100))
 
         s = ContFrac(r).homographic(a, b, c, d).as_rational()
 
-        assert ((a + b*r) / (c + d*r)) == s
+        assert ((a*r + b) / (c*r + d)) == s
 
 

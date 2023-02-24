@@ -43,31 +43,53 @@ def _convergents(x : Generator) -> Generator[fractions.Fraction, None, None]:
         p_km1, q_km1 = p_k, q_k
 
 
-def _homographic_transform(a : int, b : int, c : int, d : int, x : Generator[int, None, None]) -> Generator[int, None, None]:
+
+def _ingest(p : int, a : int, b : int, c : int, d : int) -> Tuple[int, int, int, int]:
+    return (p*a+b, a, p*c+d, c)
+
+
+def _egest(q : int, a : int, b : int, c : int, d : int) -> Tuple[int, int, int, int]:
+    return (c, d, a-q*c, b-q*d)
+
+
+def _ingest_egest_check(a : int, b : int, c : int, d : int) -> Optional[int]:
+    if c == 0 or d == 0:
+        return None
+
+    f1, f2 = math.floor(a/c), math.floor(b/d)
+
+    if f1 == f2 or abs(f1-f2) == 1:
+        q = min(f1, f2)
+
+        if q != 0: return q
+
+    return None
+
+
+def _homographic_transform(x : Generator[int, None, None], a : int, b : int, c : int, d : int) -> Generator[int, None, None]:
     while True:
-        if c == 0 and d == 0:
+        if c == 0:
             break
 
-        elif c != 0 and d != 0 and math.floor(a/c) == math.floor(b/d):
-            # emit next coefficient and EGEST
+        q = _ingest_egest_check(a, b, c, d)
 
-            q = math.floor(a/c)
+        if q is not None:
+            # emit next coefficient and EGEST
 
             yield q
 
-            a, b, c, d = c, d, a-c*q, b-d*q
+            a, b, c, d = _egest(q, a, b, c, d)
 
         else:
             # get one more term from x and INGEST
             try:
                 p = next(x)
 
-                # p ≠ ∞
-                a, b, c, d = b, a+b*p, d, c+d*p
+                a, b, c, d = _ingest(p, a, b, c, d)
 
             except StopIteration:
-                # p = ∞
-                a, b, c, d = b, b, d, d
+                # TODO: go on expanding
+                break
 
 
 class ContFrac():
@@ -163,12 +185,12 @@ class ContFrac():
     def homographic(self, a : int, b : int, c : int, d : int) -> ContFrac:
         """Apply the homographic transform
 
-        `      a + b·x
+        `      a·x + b
         ` z = ---------
-        `      c + d·x
+        `      c·x + d
 
         """
-        return ContFrac(lambda: _homographic_transform(a, b, c, d, self._coefficients()))
+        return ContFrac(lambda: _homographic_transform(self._coefficients(), a, b, c, d))
 
 
     def as_rational(self) -> fractions.Fraction:
@@ -183,9 +205,8 @@ class ContFrac():
 
             best_conv = conv
 
-        if best_conv is None:
-            # ∞
-            raise OverflowError
+        # ∞
+        if best_conv is None: raise OverflowError
 
         return best_conv
 
@@ -232,19 +253,22 @@ class ContFrac():
 
     def __add__(self, other : fractions.Fraction) -> ContFrac:
         n, d = other.numerator, other.denominator
-        return self.homographic(n, d, d, 0)
+        return self.homographic(d, n, 0, d)
 
 
     def __sub__(self, other : fractions.Fraction) -> ContFrac:
         n, d = other.numerator, other.denominator
-        return self.homographic(-n, d, d, 0)
+        return self.homographic(d, -n, 0, d)
 
 
     def __mul__(self, other : fractions.Fraction) -> ContFrac:
         n, d = other.numerator, other.denominator
-        return self.homographic(0, n, d, 0)
+        return self.homographic(n, 0, 0, d)
 
 
     def __truediv__(self, other : fractions.Fraction) -> ContFrac:
         n, d = other.numerator, other.denominator
-        return self.homographic(0, d, n, 0)
+
+        if n == 0: raise OverflowError
+
+        return self.homographic(d, 0, 0, n)
