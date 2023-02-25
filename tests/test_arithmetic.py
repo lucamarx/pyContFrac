@@ -28,7 +28,7 @@ def test_creation_from_real():
 def test_homographic():
     "test homographic transform"
     for _ in range(N_ITERS):
-        a, b, c, d = random.randint(1, 100), random.randint(1, 100), random.randint(1, 100), random.randint(1, 100)
+        a, b, c, d = random.randint(-100, 100), random.randint(-100, 100), random.randint(1, 100), random.randint(1, 100)
 
         r = Fraction(random.randint(1, 100), random.randint(1, 100))
 

@@ -19,8 +19,7 @@ def _euclid(x : fractions.Fraction) -> Generator[int, None, None]:
 
         yield q
 
-        if r == 0:
-            break
+        if r == 0: break
 
         n, d = d, r
 
@@ -52,26 +51,15 @@ def _egest(q : int, a : int, b : int, c : int, d : int) -> Tuple[int, int, int, 
     return (c, d, a-q*c, b-q*d)
 
 
-def _ingest_egest_check(a : int, b : int, c : int, d : int) -> Optional[int]:
-    if c == 0 or d == 0:
-        return None
-
-    f1, f2 = math.floor(a/c), math.floor(b/d)
-
-    if f1 == f2 or abs(f1-f2) == 1:
-        q = min(f1, f2)
-
-        if q != 0: return q
-
-    return None
-
-
 def _homographic_transform(x : Generator[int, None, None], a : int, b : int, c : int, d : int) -> Generator[int, None, None]:
-    while True:
-        if c == 0:
-            break
+    if c == 0 and d == 0:
+        return
 
-        q = _ingest_egest_check(a, b, c, d)
+    while True:
+        q = None
+
+        if c != 0 and d != 0 and a//c == b//d != 0:
+            q = a//c
 
         if q is not None:
             # emit next coefficient and EGEST
@@ -88,7 +76,10 @@ def _homographic_transform(x : Generator[int, None, None], a : int, b : int, c :
                 a, b, c, d = _ingest(p, a, b, c, d)
 
             except StopIteration:
-                # TODO: go on expanding
+                if c != 0:
+                    for q in _euclid(fractions.Fraction(a, c)):
+                        yield q
+
                 break
 
 
