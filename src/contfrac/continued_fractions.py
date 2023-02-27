@@ -195,7 +195,10 @@ class ContFrac():
     # UNARY ARITHMETIC
 
     def __int__(self) -> int:
-        return int(self.as_rational())
+        try:
+            return next(self._coefficients())
+        except StopIteration:
+            raise OverflowError
 
 
     def __float__(self) -> float:
@@ -219,7 +222,7 @@ class ContFrac():
 
 
     def __round__(self, ndigits : Optional[int] = None) -> float:
-        return round(float(self), ndigits) if ndigits else float(self)
+        return round(float(self), ndigits)
 
 
     def __pos__(self) -> ContFrac:
