@@ -42,38 +42,28 @@ def _convergents(x : Generator) -> Generator[fractions.Fraction, None, None]:
         p_km1, q_km1 = p_k, q_k
 
 
-
-def _ingest(p : int, a : int, b : int, c : int, d : int) -> Tuple[int, int, int, int]:
-    return (p*a+b, a, p*c+d, c)
-
-
-def _egest(q : int, a : int, b : int, c : int, d : int) -> Tuple[int, int, int, int]:
-    return (c, d, a-q*c, b-q*d)
-
-
 def _homographic_transform(x : Generator[int, None, None], a : int, b : int, c : int, d : int) -> Generator[int, None, None]:
     if c == 0 and d == 0:
+        # ∞
         return
 
     while True:
-        q = None
 
-        if c != 0 and d != 0 and a//c == b//d != 0:
-            q = a//c
-
-        if q is not None:
+        if c != 0 and d != 0 and c*d > 0 and math.trunc(a/c) == math.trunc(b/d) != 0:
             # emit next coefficient and EGEST
+
+            q = math.trunc(a/c)
 
             yield q
 
-            a, b, c, d = _egest(q, a, b, c, d)
+            a, b, c, d = c, d, a-q*c, b-q*d
 
         else:
             # get one more term from x and INGEST
             try:
                 p = next(x)
 
-                a, b, c, d = _ingest(p, a, b, c, d)
+                a, b, c, d = p*a+b, a, p*c+d, c
 
             except StopIteration:
                 if c != 0:
