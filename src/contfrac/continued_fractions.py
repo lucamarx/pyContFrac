@@ -233,6 +233,28 @@ class ContFrac():
         return self.homographic(0, -1, 1, 0)
 
 
+    # COMPARISON
+
+    def __eq__(self, other : fractions.Fraction) -> bool:
+        return self.as_rational() == other
+
+
+    def __lt__(self, other : fractions.Fraction) -> bool:
+        return self.as_rational() < other
+
+
+    def __le__(self, other : fractions.Fraction) -> bool:
+        return self.as_rational() <= other
+
+
+    def __gt__(self, other : fractions.Fraction) -> bool:
+        return self.as_rational() > other
+
+
+    def __ge__(self, other : fractions.Fraction) -> bool:
+        return self.as_rational() >= other
+
+
     # BINARY ARITHMETIC
 
     def __add__(self, other : fractions.Fraction) -> ContFrac:

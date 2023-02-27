@@ -46,6 +46,21 @@ def test_creation_from_real():
             assert round(y, n) == round(x, n)
 
 
+def test_comparison():
+    "test comparison operators"
+    for _ in range(N_ITERS):
+        a = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+        b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+
+        assert (ContFrac(a) == b) == (a == b)
+
+        assert (ContFrac(a) <= b) == (a <= b)
+        assert (ContFrac(a) < b)  == (a < b)
+
+        assert (ContFrac(a) >= b) == (a >= b)
+        assert (ContFrac(a) > b)  == (a > b)
+
+
 def test_homographic():
     "test homographic transform"
     for _ in range(N_ITERS):
