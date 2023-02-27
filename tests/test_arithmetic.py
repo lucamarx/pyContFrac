@@ -63,3 +63,37 @@ def test_homographic():
             assert ((a*r + b) / (c*r + d)) == s.as_rational()
 
 
+def test_sum_rational():
+    "test sum for rational numbers"
+    for _ in range(N_ITERS):
+        a = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+        b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+
+        assert ContFrac(a) + b == a + b
+
+
+def test_sub_rational():
+    "test subtraction for rational numbers"
+    for _ in range(N_ITERS):
+        a = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+        b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+
+        assert ContFrac(a) - b == a - b
+
+
+def test_mul_rational():
+    "test multiplication for rational numbers"
+    for _ in range(N_ITERS):
+        a = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+        b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+
+        assert ContFrac(a) * b == a * b
+
+
+def test_div_rational():
+    "test division for rational numbers"
+    for _ in range(N_ITERS):
+        a = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+        b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+
+        assert ContFrac(a) / b == a / b
