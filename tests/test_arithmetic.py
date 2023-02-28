@@ -120,13 +120,21 @@ def test_bihomographic():
         assert ((a*x*y + b*x + c*y + d) / (e*x*y + f*x + g*y + h)) == z.as_rational()
 
 
-def test_sum_rational():
-    "test sum for rational numbers"
+def test_sum():
+    "test sum"
     for _ in range(N_ITERS):
         a = Fraction(random.randint(1, 1000), random.randint(1, 1000))
         b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
 
         assert ContFrac(a) + b == a + b
+        assert a + ContFrac(b) == a + b
+        assert ContFrac(a) + ContFrac(b) == a + b
+
+        c = random.randint(1, 1000)
+
+        assert ContFrac(a) + c == a + c
+        assert a + ContFrac(c) == a + c
+        assert ContFrac(a) + ContFrac(c) == a + c
 
 
 def test_sub_rational():
