@@ -52,6 +52,7 @@ def test_comparison():
         a = Fraction(random.randint(1, 1000), random.randint(1, 1000))
         b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
 
+        assert ContFrac(a) == a
         assert (ContFrac(a) == b) == (a == b)
 
         assert (ContFrac(a) <= b) == (a <= b)
@@ -76,6 +77,20 @@ def test_homographic():
         else:
             # s < ∞
             assert ((a*r + b) / (c*r + d)) == s.as_rational()
+
+
+def test_bihomographic():
+    "test bihomographic transform"
+    for _ in range(N_ITERS):
+        a, b, c, d = random.randint(-100, 100), random.randint(-100, 100), random.randint(-100, 100), random.randint(-100, 100)
+        e, f, g, h = random.randint(1, 100), random.randint(1, 100), random.randint(1, 100), random.randint(1, 100)
+
+        x = Fraction(random.randint(1, 100), random.randint(1, 100))
+        y = Fraction(random.randint(1, 100), random.randint(1, 100))
+
+        z = ContFrac(x).bihomographic(ContFrac(y), a, b, c, d, e, f, g, h)
+
+        assert ((a*x*y + b*x + c*y + d) / (e*x*y + f*x + g*y + h)) == z.as_rational()
 
 
 def test_sum_rational():

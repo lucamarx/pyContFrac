@@ -73,6 +73,58 @@ def _homographic_transform(x : Generator[int, None, None], a : int, b : int, c :
                 break
 
 
+def _bihomographic_transform(x : Generator[int, None, None],
+                            y : Generator[int, None, None],
+                            a : int, b : int, c : int, d : int,
+                            e : int, f : int, g : int, h : int) -> Generator[int, None, None]:
+    if e == 0 and f == 0 and g == 0 and h == 0:
+        # ∞
+        return
+
+    stop_x = stop_y = False
+
+    while True:
+
+        if stop_x and stop_y:
+            # expand last term with Euclid
+            if e != 0:
+                for q in _euclid(fractions.Fraction(a, e)):
+                    yield q
+            break
+
+        if e != 0 and f != 0 and g != 0 and h != 0 and math.trunc(a/e) == math.trunc(b/f) == math.trunc(c/g) == math.trunc(d/h) != 0:
+            # emit next coefficient and EGEST
+
+            r = math.trunc(a/e)
+
+            yield r
+
+            a, b, c, d, e, f, g, h = e, f, g, h, a-e*r, b-f*r, c-g*r, d-h*r
+
+        else:
+            # we need more info ...
+
+            if (not stop_x and not stop_y and f != 0 and g != 0 and h != 0 and abs(b/f - d/h) > abs(c/g - d/h)) or stop_y:
+                # get one more term from x and INGEST
+                try:
+                    p = next(x)
+
+                    a, b, c, d, e, f, g, h = a*p+c, b*p+d, a, b, e*p+g, f*p+h, e, f
+
+                except StopIteration:
+                    stop_x = True
+
+            elif not stop_y:
+                # get one more term from y and INGEST
+                try:
+                    q = next(y)
+
+                    a, b, c, d, e, f, g, h = a*q+b, a, c*q+d, c, e*q+f, e, g*q+h, g
+
+                except StopIteration:
+                    stop_y = True
+
+
 class ContFrac():
     """A continued fraction
 
@@ -172,6 +224,23 @@ class ContFrac():
 
         """
         return ContFrac(lambda: _homographic_transform(self._coefficients(), a, b, c, d))
+
+
+    def bihomographic(self,
+                      other : ContFrac,
+                      a : int, b : int, c : int, d : int,
+                      e : int, f : int, g : int, h : int) -> ContFrac:
+        """Apply the bihomographic transform
+
+        `      a·x·y + b·x + c·y + d
+        ` z = -----------------------
+        `      e·x·y + f·x + g·y + h
+
+        """
+        return ContFrac(lambda: _bihomographic_transform(self._coefficients(),
+                                                         other._coefficients(),
+                                                         a, b, c, d,
+                                                         e, f, g, h))
 
 
     def as_rational(self) -> fractions.Fraction:
