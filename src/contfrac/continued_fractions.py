@@ -81,6 +81,9 @@ def _bihomographic_transform(x : Generator[int, None, None],
         # ∞
         return
 
+    if e < 0 or f < 0 or g < 0 or h < 0:
+        raise Exception("e, f, g, h must be positive")
+
     stop_x = stop_y = False
 
     while True:
