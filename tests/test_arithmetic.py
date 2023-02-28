@@ -154,13 +154,21 @@ def test_sub():
         assert ContFrac(a) - ContFrac(c) == a - c
 
 
-def test_mul_rational():
-    "test multiplication for rational numbers"
+def test_mul():
+    "test multiplication"
     for _ in range(N_ITERS):
         a = Fraction(random.randint(1, 1000), random.randint(1, 1000))
         b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
 
         assert ContFrac(a) * b == a * b
+        assert a * ContFrac(b) == a * b
+        assert ContFrac(a) * ContFrac(b) == a * b
+
+        c = random.randint(1, 1000)
+
+        assert ContFrac(a) * c == a * c
+        assert a * ContFrac(c) == a * c
+        assert ContFrac(a) * ContFrac(c) == a * c
 
 
 def test_div_rational():
