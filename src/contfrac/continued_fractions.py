@@ -358,9 +358,27 @@ class ContFrac():
         return NotImplemented
 
 
-    def __sub__(self, other : fractions.Fraction) -> ContFrac:
-        n, d = other.numerator, other.denominator
-        return self.homographic(d, -n, 0, d)
+    def __sub__(self, other : Union[int, fractions.Fraction, ContFrac]) -> ContFrac:
+        if isinstance(other, int):
+            return self.homographic(1, -other, 0, 1)
+
+        if isinstance(other, fractions.Fraction):
+            return self.homographic(other.denominator, -other.numerator, 0, other.denominator)
+
+        if isinstance(other, ContFrac):
+            return self.bihomographic(other, 0, 1, -1, 0, 0, 0, 0, 1)
+
+        return NotImplemented
+
+
+    def __rsub__(self, other : Union[int, fractions.Fraction]) -> ContFrac:
+        if isinstance(other, int):
+            return self.homographic(1, -other, 0, 1)
+
+        if isinstance(other, fractions.Fraction):
+            return self.homographic(other.denominator, -other.numerator, 0, other.denominator)
+
+        return NotImplemented
 
 
     def __mul__(self, other : fractions.Fraction) -> ContFrac:
