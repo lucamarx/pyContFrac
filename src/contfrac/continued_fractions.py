@@ -130,23 +130,32 @@ class ContFrac():
 
     """
 
-    def __init__(self, x : Union[float, fractions.Fraction, Callable[[], Generator[int, None, None]]]):
-        """Initialize a CF
+    def __init__(self, x : Union[int, float, List[int], fractions.Fraction, Callable[[], Generator[int, None, None]]]):
+        """Initialize a continued fraction
 
         Parameters
         ----------
 
-        x : Real, Rational, Callable
-        A specific value or a function that returns a stream
-        of coefficients
+        x : int, float, list, fraction, callable
+        A specific value, a list or a function
+        that returns a stream of coefficients
 
         """
         if isinstance(x, Callable):
             self._coefficients = x
+
+        elif isinstance(x, int):
+            self._coefficients = lambda: _euclid(fractions.Fraction(x,1))
+
         elif isinstance(x, float):
             self._coefficients = lambda: _euclid(fractions.Fraction(x))
+
+        elif isinstance(x, List):
+            self._coefficients = lambda: (a for a in x)
+
         elif isinstance(x, fractions.Fraction):
             self._coefficients = lambda: _euclid(x)
+
         else:
             raise TypeError
 

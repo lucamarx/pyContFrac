@@ -9,6 +9,23 @@ from contfrac import ContFrac
 
 N_ITERS = 10_000
 
+def test_creation_from_int():
+    "create a CF from a positive integer"
+    for _ in range(N_ITERS):
+        r = random.randint(1, 10_000)
+
+        s = ContFrac(r)
+
+        assert s.as_rational() == Fraction(r, 1)
+        assert s.as_integer_ratio() == (r, 1)
+
+        assert int(s) == r
+        assert float(s) == float(r)
+
+        assert math.floor(s) == r
+        assert math.ceil(s) == r
+
+
 def test_creation_from_rational():
     "create a CF from a positive rational number"
     for _ in range(N_ITERS):
@@ -44,6 +61,16 @@ def test_creation_from_real():
 
         for n in [None, 1, 2, 3, 4]:
             assert round(y, n) == round(x, n)
+
+
+def test_creation_from_list():
+    "create a CF from its coefficients"
+    for _ in range(N_ITERS):
+        r = [random.randint(1,10) for _ in range(random.randint(1, 10))]
+
+        s = ContFrac(r)
+
+        assert s.coefficients_as_list() == r
 
 
 def test_comparison():
