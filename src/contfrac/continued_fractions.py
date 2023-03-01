@@ -362,24 +362,51 @@ class ContFrac():
 
     # COMPARISON
 
-    def __eq__(self, other : fractions.Fraction) -> bool:
-        return self.as_rational() == other
+    def __eq__(self, other : Union[int, fractions.Fraction, ContFrac]) -> bool:
+        if isinstance(other, int) or isinstance(other, fractions.Fraction):
+            return self.as_rational() == other
+
+        if isinstance(other, ContFrac):
+            coeff_a, coeff_b = self._coefficients(), other._coefficients()
+
+            for a, b in zip(coeff_a, coeff_b):
+                if a != b: return False
+
+            return next(coeff_a, None) == next(coeff_b, None) == None
+
+        return NotImplemented
 
 
-    def __lt__(self, other : fractions.Fraction) -> bool:
-        return self.as_rational() < other
+    def __lt__(self, other : Union[int, fractions.Fraction, ContFrac]) -> bool:
+        if isinstance(other, int) or isinstance(other, fractions.Fraction):
+            return self.as_rational() < other
+
+        if isinstance(other, ContFrac):
+            coeff_a, coeff_b = self._coefficients(), other._coefficients()
+
+            n = 0
+            for a, b in zip(coeff_a, coeff_b):
+                if a != b:
+                    return a<b if n % 2 == 0 else b<a
+                n += 1
+
+            rest_a, rest_b = next(coeff_a, None), next(coeff_b, None)
+
+            return (rest_a if n % 2 == 0 else rest_b) is not None
+
+        return NotImplemented
 
 
-    def __le__(self, other : fractions.Fraction) -> bool:
-        return self.as_rational() <= other
+    def __le__(self, other : Union[int, fractions.Fraction, ContFrac]) -> bool:
+        return self < other or self == other
 
 
-    def __gt__(self, other : fractions.Fraction) -> bool:
-        return self.as_rational() > other
+    def __gt__(self, other : Union[int, fractions.Fraction, ContFrac]) -> bool:
+        return not (self < other)
 
 
-    def __ge__(self, other : fractions.Fraction) -> bool:
-        return self.as_rational() >= other
+    def __ge__(self, other : Union[int, fractions.Fraction, ContFrac]) -> bool:
+        return self > other or self == other
 
 
     # BINARY ARITHMETIC

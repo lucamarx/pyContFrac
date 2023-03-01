@@ -87,12 +87,29 @@ def test_comparison():
 
         assert ContFrac(a) == a
         assert (ContFrac(a) == b) == (a == b)
+        assert (a == ContFrac(b)) == (a == b)
+
+        assert (ContFrac(a) == ContFrac(b)) == (a == b)
+
+        assert (ContFrac(a) < b)  == (a < b)
+        assert (a < ContFrac(b))  == (a < b)
+
+        assert (ContFrac(a) < ContFrac(b)) == (a < b)
 
         assert (ContFrac(a) <= b) == (a <= b)
-        assert (ContFrac(a) < b)  == (a < b)
+        assert (a <= ContFrac(b)) == (a <= b)
+
+        assert (ContFrac(a) <= ContFrac(b)) == (a <= b)
+
+        assert (ContFrac(a) > b)  == (a > b)
+        assert (a > ContFrac(b))  == (a > b)
+
+        assert (ContFrac(a) > ContFrac(b)) == (a > b)
 
         assert (ContFrac(a) >= b) == (a >= b)
-        assert (ContFrac(a) > b)  == (a > b)
+        assert (a >= ContFrac(b)) == (a >= b)
+
+        assert (ContFrac(a) >= ContFrac(b)) == (a >= b)
 
 
 def test_homographic():
