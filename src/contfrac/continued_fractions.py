@@ -201,12 +201,16 @@ class ContFrac():
 
 
     def __str__(self) -> str:
+        coeffs = [str(c) for c in self.coefficients_as_list(11)]
+        s = ', '.join(coeffs[0:10] + ['...'] if len(coeffs) > 10 else [])
         v = self.as_rational()
         l = max(len(str(v.numerator)), len(str(v.denominator)))
 
         return f"""
+  [{s}]
+
   {v.numerator}
-  {"-" * l} = {v}
+  {'-' * l} = {v}
   {v.denominator}
         """
 
