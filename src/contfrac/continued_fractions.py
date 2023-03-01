@@ -34,6 +34,9 @@ def _euclid(x : fractions.Fraction) -> Generator[int, None, None]:
 
 
 def _convergents(x : Generator) -> Generator[fractions.Fraction, None, None]:
+    """Compute the convergents stream
+
+    """
     p_km1, q_km1 = 1, 0
     p_km2, q_km2 = 0, 1
 
@@ -52,6 +55,18 @@ def _convergents(x : Generator) -> Generator[fractions.Fraction, None, None]:
 
 
 def _homographic_transform(x : Generator[int, None, None], a : int, b : int, c : int, d : int) -> Generator[int, None, None]:
+    """Compute the homographic transform term by term
+
+    `      a·x + b
+    ` z = ---------
+    `      c·x + d
+
+    here we assume that
+
+    - a,b,c,d are integers (not necessarily positive)
+    - x >= 0
+
+    """
     if c == 0 and d == 0:
         # ∞
         return
@@ -86,6 +101,19 @@ def _bihomographic_transform(x : Generator[int, None, None],
                              y : Generator[int, None, None],
                              a : int, b : int, c : int, d : int,
                              e : int, f : int, g : int, h : int) -> Generator[int, None, None]:
+    """Compute the bihomographic transform term by term
+
+    `      a·x·y + b·x + c·y + d
+    ` z = -----------------------
+    `      e·x·y + f·x + g·y + h
+
+    here we assume that
+
+    - a,b,c,d are integers
+    - e,f,g,h are *positive* integers (possibly zero)
+    - x, y >= 0
+
+    """
     if e == 0 and f == 0 and g == 0 and h == 0:
         # ∞
         return
@@ -283,7 +311,20 @@ class ContFrac():
 
 
     def split(self) -> Tuple[int, ContFrac]:
-        """Split first term from the rest
+        """Split first coefficient from the rest
+
+        `            1
+        ` a0 + -------------
+        `              1
+        `      a1 + --------
+        `                 1
+        `           a2 + ---
+        `                ...
+
+        Returns
+        -------
+
+        `(a0, CF(a1, a2, ...))`
 
         """
         coeff = self._coefficients()
