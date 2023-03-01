@@ -82,8 +82,8 @@ def test_creation_from_list():
 def test_comparison():
     "test comparison operators"
     for _ in range(N_ITERS):
-        a = Fraction(random.randint(1, 1000), random.randint(1, 1000))
-        b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+        a = Fraction(random.randint(-1000, 1000), random.randint(1, 1000))
+        b = Fraction(random.randint(-1000, 1000), random.randint(1, 1000))
 
         assert ContFrac(a) == a
         assert (ContFrac(a) == b) == (a == b)
@@ -164,7 +164,7 @@ def test_mul():
     "test multiplication"
     for _ in range(N_ITERS):
         a = Fraction(random.randint(-1000, 1000), random.randint(1, 1000))
-        b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+        b = Fraction(random.randint(-1000, 1000), random.randint(1, 1000))
 
         assert ContFrac(a) * b == a * b
         assert a * ContFrac(b) == a * b
