@@ -201,13 +201,15 @@ class ContFrac():
 
 
     def __str__(self) -> str:
+        if self.is_inf():
+            return "  ∞"
+
         coeffs = [str(c) for c in self.coefficients_as_list(11)]
-        s = ', '.join(coeffs[0:10] + ['...'] if len(coeffs) > 10 else [])
+        s = ', '.join(coeffs[0:10] + (['...'] if len(coeffs) > 10 else []))
         v = self.as_rational()
         l = max(len(str(v.numerator)), len(str(v.denominator)))
 
-        return f"""
-  [{s}]
+        return f"""  [{s}]
 
   {v.numerator}
   {'-' * l} = {v}
@@ -216,7 +218,7 @@ class ContFrac():
 
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.as_rational()})"
+        return f"{self.__class__.__name__}({self.as_rational() if not self.is_inf() else '∞'})"
 
 
     def coefficients(self) -> Generator[int, None, None]:
@@ -337,6 +339,18 @@ class ContFrac():
             return (next(coeff), ContFrac(lambda: _residue(self._coefficients())))
         except StopIteration:
             raise OverflowError
+
+
+    def is_inf(self) -> bool:
+        """Check if continued fraction is infinite
+
+        """
+        coeff = self._coefficients()
+        try:
+            next(coeff)
+            return False
+        except StopIteration:
+            return True
 
 
     # UNARY ARITHMETIC
