@@ -453,9 +453,39 @@ class ContFrac():
         return NotImplemented
 
 
-    def __truediv__(self, other : fractions.Fraction) -> ContFrac:
-        n, d = other.numerator, other.denominator
+    def __truediv__(self, other : Union[int, fractions.Fraction, ContFrac]) -> ContFrac:
+        if isinstance(other, int) or isinstance(other, fractions.Fraction):
 
-        if n == 0: raise OverflowError
+            if isinstance(other, int):
+                n, d = other, 1
+            else:
+                n, d = other.numerator, other.denominator
 
-        return self.homographic(d, 0, 0, n)
+                if d < 0: n, d = -n, -d
+
+            if n == 0: raise OverflowError
+
+            return self.homographic(d, 0, 0, n)
+
+        if isinstance(other, ContFrac):
+            if other == 0: raise OverflowError
+
+            if other > 0:
+                return self.bihomographic(other, 0, 1, 0, 0, 0, 0, 1, 0)
+            else:
+                return self.bihomographic(-other, 0, -1, 0, 0, 0, 0, 1, 0)
+
+
+    def __rtruediv__(self, other : Union[int, fractions.Fraction]) -> ContFrac:
+        if isinstance(other, int):
+            n, d = other, 1
+        elif isinstance(other, fractions.Fraction):
+            n, d = other.numerator, other.denominator
+
+            if d < 0: n, d = -n, -d
+        else:
+            return NotImplemented
+
+        if self == 0: raise OverflowError
+
+        return self.homographic(0, n, d, 0)
