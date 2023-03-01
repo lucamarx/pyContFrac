@@ -12,7 +12,7 @@ N_ITERS = 10_000
 def test_creation_from_int():
     "create a CF from a positive integer"
     for _ in range(N_ITERS):
-        r = random.randint(1, 10_000)
+        r = random.randint(-10_000, 10_000)
 
         s = ContFrac(r)
 
@@ -25,11 +25,14 @@ def test_creation_from_int():
         assert math.floor(s) == r
         assert math.ceil(s) == r
 
+        assert abs(s) == abs(r)
+        assert -s == -r
+
 
 def test_creation_from_rational():
     "create a CF from a positive rational number"
     for _ in range(N_ITERS):
-        r = Fraction(random.randint(1, 10_000), random.randint(1, 10_000))
+        r = Fraction(random.randint(-10_000, 10_000), random.randint(1, 10_000))
 
         s = ContFrac(r)
 
@@ -41,6 +44,9 @@ def test_creation_from_rational():
 
         assert math.floor(s) == math.floor(r)
         assert math.ceil(s) == math.ceil(r)
+
+        assert abs(s) == abs(r)
+        assert -s == -r
 
 
 def test_creation_from_real():

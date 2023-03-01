@@ -8,6 +8,15 @@ import math, itertools, fractions
 from typing import Optional, Union, Callable, Generator, List, Tuple
 
 
+def _residue(x : Generator[int, None, None]) -> Generator[int, None, None]:
+    """Skip first term
+
+    """
+    next(x)
+
+    return x
+
+
 def _euclid(x : fractions.Fraction) -> Generator[int, None, None]:
     """Euclid's algorithm
 
@@ -74,9 +83,9 @@ def _homographic_transform(x : Generator[int, None, None], a : int, b : int, c :
 
 
 def _bihomographic_transform(x : Generator[int, None, None],
-                            y : Generator[int, None, None],
-                            a : int, b : int, c : int, d : int,
-                            e : int, f : int, g : int, h : int) -> Generator[int, None, None]:
+                             y : Generator[int, None, None],
+                             a : int, b : int, c : int, d : int,
+                             e : int, f : int, g : int, h : int) -> Generator[int, None, None]:
     if e == 0 and f == 0 and g == 0 and h == 0:
         # ∞
         return
@@ -273,6 +282,18 @@ class ContFrac():
         return best_conv
 
 
+    def split(self) -> Tuple[int, ContFrac]:
+        """Split first term from the rest
+
+        """
+        coeff = self._coefficients()
+
+        try:
+            return (next(coeff), ContFrac(lambda: _residue(self._coefficients())))
+        except StopIteration:
+            raise OverflowError
+
+
     # UNARY ARITHMETIC
 
     def __int__(self) -> int:
@@ -311,7 +332,15 @@ class ContFrac():
 
 
     def __neg__(self) -> ContFrac:
-        return self.homographic(0, -1, 1, 0)
+        a, r = self.split()
+
+        return r.homographic(-a, -1, 1, 0)
+
+
+    def __abs__(self) -> ContFrac:
+        a, r = self.split()
+
+        return r.homographic(-a, -1, 1, 0) if a < 0 else self
 
 
     # COMPARISON
