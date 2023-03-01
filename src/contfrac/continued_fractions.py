@@ -298,7 +298,24 @@ class ContFrac():
 
     def __int__(self) -> int:
         try:
-            return next(self._coefficients())
+            coeff = self._coefficients()
+
+            a = next(coeff)
+
+            # CF is positive return first coefficient
+            if a >= 0:
+                return a
+
+            try:
+                next(coeff)
+
+                # CF is negative
+                return a+1
+
+            except StopIteration:
+                # CF is a negative integer
+                return a
+
         except StopIteration:
             raise OverflowError
 
