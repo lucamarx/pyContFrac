@@ -116,7 +116,7 @@ def test_bihomographic():
     "test bihomographic transform"
     for _ in range(N_ITERS):
         a, b, c, d = random.randint(-100, 100), random.randint(-100, 100), random.randint(-100, 100), random.randint(-100, 100)
-        e, f, g, h = random.randint(1, 100), random.randint(1, 100), random.randint(1, 100), random.randint(1, 100)
+        e, f, g, h = random.randint(0, 100), random.randint(0, 100), random.randint(0, 100), random.randint(0, 100)
 
         x = Fraction(random.randint(1, 100), random.randint(1, 100))
         y = Fraction(random.randint(1, 100), random.randint(1, 100))
@@ -136,7 +136,7 @@ def test_sum():
         assert a + ContFrac(b) == a + b
         assert ContFrac(a) + ContFrac(b) == a + b
 
-        c = random.randint(1, 1000)
+        c = random.randint(-1000, 1000)
 
         assert ContFrac(a) + c == a + c
         assert a + ContFrac(c) == a + c
@@ -146,14 +146,14 @@ def test_sum():
 def test_sub():
     "test subtraction"
     for _ in range(N_ITERS):
-        a = Fraction(random.randint(1, 1000), random.randint(1, 1000))
-        b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+        a = Fraction(random.randint(-1000, 1000), random.randint(1, 1000))
+        b = Fraction(random.randint(-1000, 1000), random.randint(1, 1000))
 
         assert ContFrac(a) - b == a - b
         assert a - ContFrac(b) == a - b
         assert ContFrac(a) - ContFrac(b) == a - b
 
-        c = random.randint(1, 1000)
+        c = random.randint(-1000, 1000)
 
         assert ContFrac(a) - c == a - c
         assert a - ContFrac(c) == a - c
@@ -170,7 +170,7 @@ def test_mul():
         assert a * ContFrac(b) == a * b
         assert ContFrac(a) * ContFrac(b) == a * b
 
-        c = random.randint(1, 1000)
+        c = random.randint(-1000, 1000)
 
         assert ContFrac(a) * c == a * c
         assert a * ContFrac(c) == a * c
@@ -181,15 +181,16 @@ def test_div():
     "test division"
     for _ in range(N_ITERS):
         a = Fraction(random.randint(-1000, 1000), random.randint(1, 1000))
-        b = Fraction(random.randint(1, 1000), random.randint(1, 1000))
+        b = Fraction(random.randint(-1000, 1000), random.randint(1, 1000))
 
         if b != 0:
             assert ContFrac(a) / b == a / b
             assert a / ContFrac(b) == a / b
             assert ContFrac(a) / ContFrac(b) == a / b
 
-        c = random.randint(1, 1000)
+        c = random.randint(-1000, 1000)
 
-        assert ContFrac(a) / c == a / c
-        assert a / ContFrac(c) == a / c
-        assert ContFrac(a) / ContFrac(c) == a / c
+        if c != 0:
+            assert ContFrac(a) / c == a / c
+            assert a / ContFrac(c) == a / c
+            assert ContFrac(a) / ContFrac(c) == a / c
