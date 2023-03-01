@@ -422,10 +422,10 @@ class ContFrac():
 
     def __rsub__(self, other : Union[int, fractions.Fraction]) -> ContFrac:
         if isinstance(other, int):
-            return self.homographic(1, -other, 0, 1)
+            return self.homographic(-1, other, 0, 1)
 
         if isinstance(other, fractions.Fraction):
-            return self.homographic(other.denominator, -other.numerator, 0, other.denominator)
+            return self.homographic(-other.denominator, other.numerator, 0, other.denominator)
 
         return NotImplemented
 
