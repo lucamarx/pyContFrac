@@ -5,10 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "lucamarx-contfrac"
 readme = "README.md"
-version = "0.0.1"
+version = "0.1.0"
 authors = [{name="Luca Marx", email="luca@lucamarx.com"}]
 license = {file="LICENSE"}
-keywords = ["numbers", "continued", "fraction"]
+keywords = ["arithmetic", "continued-fraction"]
 description = "A continued fraction library"
 classifiers = [
     "License :: OSI Approved :: MIT License",
