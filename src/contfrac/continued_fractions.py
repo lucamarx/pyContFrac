@@ -218,7 +218,7 @@ class ContFrac():
         return f"""  [{s}]
 
   {v.numerator}
-  {'-' * l} = {v}
+  {'-' * l} = {float(v)}
   {v.denominator}
         """
 
