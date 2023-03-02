@@ -170,19 +170,25 @@ class ContFrac():
 
     """
 
-    def __init__(self, x : Union[int, float, List[int], fractions.Fraction, Callable[[], Generator[int, None, None]]]):
+    def __init__(self, x : Union[str, int, float, List[int], fractions.Fraction, Callable[[], Generator[int, None, None]]]):
         """Initialize a continued fraction
 
         Parameters
         ----------
 
-        x : int, float, list, fraction, callable
+        x : str, int, float, list, fraction, callable
         A specific value, a list or a function
         that returns a stream of coefficients
 
         """
         if isinstance(x, Callable):
             self._coefficients = x
+
+        elif isinstance(x, str):
+            if x == "inf":
+                self._coefficients = lambda: (a for a in [])
+            else:
+                self._coefficients = lambda: _euclid(fractions.Fraction(x))
 
         elif isinstance(x, int):
             self._coefficients = lambda: _euclid(fractions.Fraction(x,1))
@@ -549,14 +555,11 @@ class ContFrac():
 
                 if d < 0: n, d = -n, -d
 
-            if n == 0: raise OverflowError
-
             return self.homographic(d, 0, 0, n)
 
         if isinstance(other, ContFrac):
-            if other == 0: raise OverflowError
 
-            if other > 0:
+            if other >= 0:
                 return self.bihomographic(other, 0, 1, 0, 0, 0, 0, 1, 0)
             else:
                 return self.bihomographic(-other, 0, -1, 0, 0, 0, 0, 1, 0)
@@ -571,7 +574,5 @@ class ContFrac():
             if d < 0: n, d = -n, -d
         else:
             return NotImplemented
-
-        if self == 0: raise OverflowError
 
         return self.homographic(0, n, d, 0)
