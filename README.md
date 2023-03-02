@@ -7,13 +7,13 @@ pyContFrac is a library to do arithmetic with **continued fractions**.
 A [continued fraction](https://en.wikipedia.org/wiki/Continued_fractions) is a
 way to represent real numbers
 
->                1
-> x = a0 + -------------
->                  1
->          a1 + --------
->                     1
->               a2 + ---
->                    ...
+                   1
+    x = a0 + -------------
+                     1
+             a1 + --------
+                        1
+                  a2 + ---
+                       ...
 
 
 In 1972 [Bill Gosper](https://en.wikipedia.org/wiki/Bill_Gosper) discovered an
