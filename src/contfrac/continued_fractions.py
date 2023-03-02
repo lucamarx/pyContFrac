@@ -467,7 +467,7 @@ class ContFrac():
 
 
     def __gt__(self, other : Union[int, fractions.Fraction, ContFrac]) -> bool:
-        return not (self < other)
+        return not (self <= other)
 
 
     def __ge__(self, other : Union[int, fractions.Fraction, ContFrac]) -> bool:
