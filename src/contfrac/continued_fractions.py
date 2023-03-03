@@ -187,6 +187,15 @@ class ContFrac():
         elif isinstance(x, str):
             if x == "inf":
                 self._coefficients = lambda: (a for a in [])
+            elif x == "Φ" or x == "A000012":
+                # https://oeis.org/A000012
+                self._coefficients = lambda: (1 for _ in itertools.count(1))
+            elif x == "√2" or x == "A040000":
+                # https://oeis.org/A040000
+                self._coefficients = lambda: (1 if n == 1 else 2 for n in itertools.count(1))
+            elif x == "e" or x == "A001620":
+                # https://oeis.org/A001620
+                self._coefficients = lambda: (2 if n == 1 else 1 if n % 3 else n//3 << 1 for n in itertools.count(1))
             else:
                 self._coefficients = lambda: _euclid(fractions.Fraction(x))
 
