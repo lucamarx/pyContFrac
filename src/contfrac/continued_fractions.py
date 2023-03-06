@@ -443,10 +443,13 @@ class ContFrac():
         if isinstance(other, ContFrac):
             coeff_a, coeff_b = self._coefficients(), other._coefficients()
 
-            for a, b in zip(coeff_a, coeff_b):
-                if a != b: return False
+            try:
+                for a, b in zip(coeff_a, coeff_b, strict=True):
+                    if a != b: return False
+            except ValueError:
+                return False
 
-            return next(coeff_a, None) == next(coeff_b, None) == None
+            return True
 
         return NotImplemented
 
