@@ -6,6 +6,7 @@ from __future__ import annotations
 import math, itertools, fractions
 
 from typing import Optional, Union, Callable, Generator, List, Tuple
+from .utils import CachedGenerator
 
 
 def _residue(x : Generator[int, None, None]) -> Generator[int, None, None]:
@@ -459,17 +460,20 @@ class ContFrac():
             return self.as_rational() < other
 
         if isinstance(other, ContFrac):
-            coeff_a, coeff_b = self._coefficients(), other._coefficients()
+            coeff_a, coeff_b = CachedGenerator(self._coefficients()), CachedGenerator(other._coefficients())
 
             n = 0
-            for a, b in zip(coeff_a, coeff_b):
-                if a != b:
-                    return a<b if n % 2 == 0 else b<a
-                n += 1
+            try:
+                for a, b in zip(coeff_a, coeff_b, strict=True):
+                    if a != b: return a<b if n % 2 == 0 else b<a
+                    n += 1
+            except ValueError:
+                if len(coeff_a.last_values) > 0 and len(coeff_b.last_values) > 0:
+                    last_a, last_b = coeff_a.last_values[0], coeff_b.last_values[0]
 
-            rest_a, rest_b = next(coeff_a, None), next(coeff_b, None)
+                    return (last_a if n % 2 == 0 else last_b) is not None
 
-            return (rest_a if n % 2 == 0 else rest_b) is not None
+            return False
 
         return NotImplemented
 
