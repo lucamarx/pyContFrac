@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "lucamarx-contfrac"
 readme = "README.md"
-version = "0.1.0"
+version = "0.2.0"
 authors = [{name="Luca Marx", email="luca@lucamarx.com"}]
 license = {file="LICENSE"}
 keywords = ["arithmetic", "continued-fraction"]
@@ -15,7 +15,9 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
 ]
-dependencies = []
+dependencies = [
+    "numpy >= 1.22"
+]
 requires-python = ">=3.9"
 
 [project.urls]
