@@ -7,6 +7,7 @@ import math, itertools, fractions
 
 from typing import Optional, Union, Callable, Generator, List, Tuple
 from .utils import CachedGenerator
+from contfrac import stern_brocot
 
 
 def _residue(x : Generator[int, None, None]) -> Generator[int, None, None]:
@@ -197,6 +198,8 @@ class ContFrac():
             elif x == "e" or x == "A001620":
                 # https://oeis.org/A001620
                 self._coefficients = lambda: (2 if n == 1 else 1 if n % 3 else n//3 << 1 for n in itertools.count(1))
+            elif x.startswith("L") or x.startswith("R"):
+                self._coefficients = lambda: _euclid(stern_brocot.decode(x))
             else:
                 self._coefficients = lambda: _euclid(fractions.Fraction(x))
 
@@ -367,6 +370,13 @@ class ContFrac():
             return False
         except StopIteration:
             return True
+
+
+    def stern_brocot(self) -> str:
+        """Stern-Brocot numeral
+
+        """
+        return stern_brocot.encode(self.as_rational())
 
 
     # UNARY ARITHMETIC
