@@ -56,3 +56,22 @@ def encode(r : fractions.Fraction) -> str:
             S, T = S + "R", T @ R
 
     return S
+
+
+def homographic(S : str, a :int, b : int, c : int, d : int) -> str:
+    """Apply the homographic transform to the Stern-Brocot numeral
+
+    """
+    T = np.array([[c, d],
+                  [a, b]],
+                 dtype=np.int64)
+
+    for s in S:
+        if s == "L":
+            T = T @ L
+        elif s == "R":
+            T = T @ R
+        else:
+            raise ValueError
+
+    return encode(_mediant(T))
