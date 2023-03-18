@@ -84,3 +84,17 @@ class PadeApprox():
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.l}, {self.m}, f)"
+
+
+    def __call__(self, z : float) -> float:
+        """Evaluate Approximant
+
+        """
+        powers = [z**i for i in range(max(self.l,self.m) + 1)]
+
+        P = sum([a*x for a,x in zip(self.a, powers)])
+        Q = 1 + sum([b*x for b,x in zip(self.b, powers[1:])])
+
+        if Q == 0: raise OverflowError
+
+        return P / Q
