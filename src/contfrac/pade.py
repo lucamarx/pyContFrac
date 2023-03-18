@@ -27,8 +27,7 @@ def _pade(l : int, m : int, c : List[float]) -> Tuple[np.ndarray, np.ndarray]:
             A[k,j] = C[l-m-j+k+1]
 
     # solve linear system for Q's coefficients
-    b = np.linalg.solve(A, B)
-    b = np.flip(b)
+    b = np.flip(np.linalg.solve(A, B))
 
     # compute P's coefficients
     a, n = C[0:l+1], min(l,m)
@@ -67,7 +66,7 @@ class PadeApprox():
         if isinstance(f, List):
             coeffs = f
         elif isinstance(f, Generator):
-            coeffs = list(itertools.islice(f, l+m))
+            coeffs = list(itertools.islice(f, l+m+1))
         else:
             raise TypeError
 
@@ -79,9 +78,9 @@ class PadeApprox():
 
     def __str__(self) -> str:
         return f"""
-  [{self.l}/{self.m}] (z)
-           f
+  [{self.l}/{self.m}](z)_f
         """
+
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.l}, {self.m}, f)"
