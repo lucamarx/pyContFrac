@@ -1,5 +1,5 @@
-"""
-Padé Approximants
+"""Padé Approximants
+
 """
 import numpy as np
 import itertools
@@ -14,6 +14,9 @@ def _pade(l : int, m : int, c : List[float]) -> Tuple[np.ndarray, np.ndarray]:
     `      f      Q(z)
 
     """
+    if len(c) < l+m+1:
+        raise Exception(f"f must provide at least {l+m+1} coefficients")
+
     C = np.array(c, dtype=np.float64)
 
     # setup linear system
@@ -35,6 +38,9 @@ def _pade(l : int, m : int, c : List[float]) -> Tuple[np.ndarray, np.ndarray]:
     if n > 0:
         for i in range(1,l+1):
             a[i] += np.dot(b[0:n], np.flip(c[0:n]))
+
+    # insert b_0=1 value
+    b = np.insert(b, 0, [1])
 
     return (a, b)
 
@@ -70,10 +76,7 @@ class PadeApprox():
         else:
             raise TypeError
 
-        if len(coeffs) < l+m+1:
-            raise Exception(f"f must provide at least {l+m+1} coefficients")
-
-        self.a, self.b = _pade(l, m, coeffs[0:(l+m+1)])
+        self.a, self.b = _pade(l, m, coeffs[0:l+m+1])
 
 
     def __str__(self) -> str:
@@ -86,14 +89,14 @@ class PadeApprox():
         return f"{self.__class__.__name__}({self.l}, {self.m}, f)"
 
 
-    def __call__(self, z : float) -> float:
+    def __call__(self, x : float) -> float:
         """Evaluate Approximant
 
         """
-        powers = [z**i for i in range(max(self.l,self.m) + 1)]
+        x_powers = [x**i for i in range(max(self.l,self.m) + 1)]
 
-        P = sum([a*x for a,x in zip(self.a, powers)])
-        Q = 1 + sum([b*x for b,x in zip(self.b, powers[1:])])
+        P = sum([a*x for a,x in zip(self.a, x_powers)])
+        Q = sum([b*x for b,x in zip(self.b, x_powers)])
 
         if Q == 0: raise OverflowError
 
