@@ -5,6 +5,8 @@ import numpy as np
 import itertools
 from typing import Generator, List, Tuple, Union
 
+from .utils import latex_format_poly
+
 
 def _pade(l : int, m : int, c : List[float]) -> Tuple[np.ndarray, np.ndarray]:
     """Compute Padé approximant given McLaurin coefficients
@@ -80,22 +82,28 @@ class PadeApprox():
 
 
     def __str__(self) -> str:
-        return f"""
-  [{self.l}/{self.m}](z)_f
-        """
+        return f"[{self.l}/{self.m}](z)"
 
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.l}, {self.m}, f)"
+        return f"{self.__class__.__name__}({self.l}, {self.m})"
+
+
+    def _repr_latex_(self) -> str:
+        return f"$[{self.l}/{self.m}](x) = \\frac{{{latex_format_poly(self.a)}}}{{{latex_format_poly(self.b)}}}$"
 
 
     def __call__(self, x : float) -> float:
         """Evaluate Approximant
 
         """
+        # 1, x, x^2, ..., x^(m+l+1)
         x_powers = [x**i for i in range(max(self.l,self.m) + 1)]
 
+        # a_0 + a_1 x + a_2 x^2 + ... + a_l x^l
         P = sum([a*x for a,x in zip(self.a, x_powers)])
+
+        # 1 + b_1 x + b_2 x^2 + ... + b_m x^m
         Q = sum([b*x for b,x in zip(self.b, x_powers)])
 
         if Q == 0: raise OverflowError
