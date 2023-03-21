@@ -94,8 +94,30 @@ class PadeApprox():
         return f"$[{self.l}/{self.m}](x) = \\frac{{{latex_format_poly(self.a)}}}{{{latex_format_poly(self.b)}}}$"
 
 
+    def P(self, x : float) -> float:
+        """Evaluate approximant numerator
+
+        """
+        # 1, x, x^2, ..., x^l
+        x_powers = [x**i for i in range(self.l + 1)]
+
+        # a_0 + a_1 x + a_2 x^2 + ... + a_l x^l
+        return sum([a*x for a,x in zip(self.a, x_powers)])
+
+
+    def Q(self, x : float) -> float:
+        """Evaluate approximant denominator
+
+        """
+        # 1, x, x^2, ..., x^m
+        x_powers = [x**i for i in range(self.m + 1)]
+
+        # 1 + b_1 x + b_2 x^2 + ... + b_m x^m
+        return sum([b*x for b,x in zip(self.b, x_powers)])
+
+
     def __call__(self, x : float) -> float:
-        """Evaluate Approximant
+        """Evaluate approximant
 
         """
         # 1, x, x^2, ..., x^(m+l+1)
