@@ -25,24 +25,25 @@ def _pade(l : int, m : int, c : List[float]) -> Tuple[np.ndarray, np.ndarray]:
     A = np.zeros((m, m), dtype=np.float64)
     B = np.zeros(m, dtype=np.float64)
 
-    for j in range(m):
-        B[j] = -C[l+j+1]
+    for i in range(m):
+        B[i] = -C[l+1+i]
 
-        for k in range(m):
-            A[k,j] = C[l-m-j+k+1]
+        for j in range(m):
+            k = l-m+1+i+j
+            A[i,j] = C[k] if k >= 0 else 0
 
     # solve linear system for Q's coefficients
     b = np.flip(np.linalg.solve(A, B))
 
-    # compute P's coefficients
-    a, n = C[0:l+1], min(l,m)
-
-    if n > 0:
-        for i in range(1,l+1):
-            a[i] += np.dot(b[0:n], np.flip(c[0:n]))
-
     # insert b_0=1 value
     b = np.insert(b, 0, [1])
+
+    # compute P's coefficients
+    a = np.zeros(l+1, dtype=np.float64)
+
+    for i in range(0,l+1):
+        for j in range(min(m,i)+1):
+            a[i] += b[j]*C[i-j]
 
     return (a, b)
 
