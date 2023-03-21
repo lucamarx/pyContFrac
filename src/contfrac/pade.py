@@ -11,9 +11,9 @@ from .utils import latex_format_poly
 def _pade(l : int, m : int, c : List[float]) -> Tuple[np.ndarray, np.ndarray]:
     """Compute Padé approximant given McLaurin coefficients
 
-    `             P(z)
-    ` [l/m] (z) = ----
-    `      f      Q(z)
+    `             P(x)
+    ` [l/m] (x) = ----
+    `      f      Q(x)
 
     """
     if len(c) < l+m+1:
@@ -83,7 +83,7 @@ class PadeApprox():
 
 
     def __str__(self) -> str:
-        return f"[{self.l}/{self.m}](z)"
+        return f"[{self.l}/{self.m}](x)"
 
 
     def __repr__(self) -> str:
