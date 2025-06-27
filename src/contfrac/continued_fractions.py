@@ -74,7 +74,7 @@ def _homographic_transform(x : Generator[int, None, None], a : int, b : int, c :
 
     while True:
 
-        if c != 0 and d != 0 and c*d > 0 and math.trunc(a/c) == math.trunc(b/d) != 0:
+        if c*d > 0 and math.trunc(a/c) == math.trunc(b/d):
             # emit next coefficient and EGEST
 
             q = math.trunc(a/c)
