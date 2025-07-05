@@ -237,7 +237,7 @@ class ContFrac():
         return f"{self.__class__.__name__}({self.as_rational() if not self.is_inf() else '∞'})"
 
 
-    def coefficients(self) -> Generator[int, None, None]:
+    def coefficients(self, N : int | None = None) -> Generator[int, None, None]:
         """The coefficients stream of the continued fraction
 
         `            1
@@ -254,14 +254,17 @@ class ContFrac():
         `[a0, a1, a2, ...]`
 
         """
-        return self._coefficients()
+        if N == None:
+            return self._coefficients()
+        else:
+            return itertools.islice(self.coefficients(), N) 
 
 
     def coefficients_as_list(self, N : int = 40) -> List[int]:
         """The coefficients as a list
 
         """
-        return list(itertools.islice(self.coefficients(), N))
+        return list(self.coefficients(N))
 
 
     def convergents(self) -> Generator[fractions.Fraction, None, None]:
