@@ -1,8 +1,12 @@
 """
 Stern-Brocot numerals
 """
+from __future__ import annotations
+
 import numpy as np
-import fractions
+import re, fractions
+
+from typing import Union
 
 
 L = np.array([[1, 1],
@@ -75,3 +79,70 @@ def homographic(S : str, a :int, b : int, c : int, d : int) -> str:
             raise ValueError
 
     return encode(_mediant(T))
+
+
+class SterBroc():
+    """Signed Stern-Brocot numbers
+
+    """
+
+    def __init__(self, x : Union[str, fractions.Fraction]):
+        """Initialize a Stern-Brocot number
+
+        """
+        if isinstance(x, str):
+            m = re.match("^([+-]*)([LR]*)$", x)
+            if m:
+                self.sign = -1 if m.group(1) == "-" else +1
+                self.value = decode(m.group(2))
+                self.numeral = m.group(2)
+            else:
+                raise Exception("invalid Stern-Brocot numeral")
+
+        elif isinstance(x, fractions.Fraction):
+            if x == 0:
+                self.sign = 0
+                self.value = 0
+                self.numeral = None
+            else:
+                self.sign = -1 if x < 0 else 1
+                self.value = abs(x)
+                self.numeral = encode(abs(x))
+
+        else:
+            raise TypeError
+
+
+    def __str__(self) -> str:
+        if self.sign == 0:
+            return "0"
+
+        s = "+" if self.sign == 1 else "-"
+        n, d = str(self.value.numerator), str(self.value.denominator)
+        l = max(len(n), len(d))
+
+        return f"""
+    {n}
+  {s} {'-'*l} = {s}{self.numeral}
+    {d}
+        """
+
+
+    def __repr__(self) -> str:
+        if self.sign == 0:
+            return f"{self.__class__.__name__}(0)"
+
+        s = "+" if self.sign == 1 else "-"
+
+        return f"{self.__class__.__name__}({s}{self.numeral})"
+
+
+    def homographic(self, a : int, b : int, c : int, d : int) -> SterBroc:
+        """Apply the homographic transform
+
+        `      a·x + b
+        ` y = ---------
+        `      c·x + d
+
+        """
+        pass
